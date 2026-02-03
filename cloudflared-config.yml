@@ -1,0 +1,7 @@
+tunnel: 52b0b3fb-4e10-42e9-803a-138891168a77
+credentials-file: /home/seanvs/.cloudflared/52b0b3fb-4e10-42e9-803a-138891168a77.json
+
+ingress:
+  - hostname: seanvs.us
+    service: http://localhost:8080
+  - service: http_status:404
