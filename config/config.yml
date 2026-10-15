@@ -14,5 +14,8 @@ ingress:
   - hostname: pi.seanvs.us
     service: ssh://localhost:22
 
+  - hostname: tracker.seanvs.us
+    service: http://localhost:8082
+
   - service: http_status:404
 

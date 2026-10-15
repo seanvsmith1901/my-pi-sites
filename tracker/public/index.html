@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Headache diary</title>
+<style>
+:root{--bg:#f3f6f7;--card:#fff;--ink:#17262b;--mute:#5d7077;--line:#d5dee1;--acc:#1f6f78;--acc-ink:#fff;--sel:#d9eef0;--warn:#a5361f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#10181b;--card:#182327;--ink:#e6eef0;--mute:#93a7ad;--line:#2b3b40;--acc:#5bbcc6;--acc-ink:#0b1417;--sel:#1f3a3f;--warn:#ef8d78}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:520px;margin:0 auto;padding:16px 14px 40px}
+h1{font-size:1.5rem;margin:6px 0 2px}
+h2{font-size:1.05rem;margin:0}
+.sub{color:var(--mute);margin:0 0 14px;font-size:.92rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.f{margin-bottom:14px}.f:last-child{margin-bottom:0}
+label,.lbl{display:block;font-weight:600;font-size:.92rem;margin-bottom:6px}
+.hint{font-weight:400;color:var(--mute)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{flex:1 1 auto;min-width:56px;padding:10px 8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;font:inherit;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--sel);border-color:var(--acc);font-weight:600}
+input,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.primary{width:100%;padding:13px;border:0;border-radius:10px;background:var(--acc);color:var(--acc-ink);font:inherit;font-weight:700;cursor:pointer}
+.ghost{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:inherit;cursor:pointer}
+.entry{border-top:1px solid var(--line);padding:10px 0}.entry:first-of-type{border-top:0}
+.meta{color:var(--mute);font-size:.9rem}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.msg{font-size:.9rem;min-height:1.2em;margin-top:8px;color:var(--acc)}
+.msg.err{color:var(--warn)}
+.stats{display:flex;gap:10px}.stat{flex:1;text-align:center;padding:8px 4px;background:var(--bg);border-radius:8px}
+.stat b{display:block;font-size:1.4rem}.stat span{font-size:.8rem;color:var(--mute)}
+.strip{display:flex;gap:3px;margin-top:10px}
+.dot{flex:1;height:14px;border-radius:3px;background:var(--line)}
+.d1{background:#9ccfd4}.d2{background:#3f9aa4}.d3{background:#d98a3c}.d4{background:#a5361f}
+summary{cursor:pointer;font-weight:600}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.small{font-size:.85rem;color:var(--mute);margin:8px 0 0}
+</style>
+</head>
+<body>
+<main>
+<h1>Headache diary</h1>
+<p class="sub">About 30 seconds. Log the good days too (headache 0).</p>
+<section class="card" aria-label="Last 30 days">
+  <div class="stats">
+    <div class="stat"><b id="s1">0</b><span>headache days (30d)</span></div>
+    <div class="stat"><b id="s2">0</b><span>days logged (30d)</span></div>
+    <div class="stat"><b id="s3">-</b><span>pressure now (hPa)</span></div>
+  </div>
+  <div class="strip" id="strip" aria-hidden="true"></div>
+  <p class="small">Each block is a day, oldest to newest. Darker means a worse headache. <span id="pnote"></span></p>
+</section>
+<section class="card" aria-label="New entry">
+  <div class="f"><label for="date">Date</label><input type="date" id="date"></div>
+  <div class="f"><span class="lbl">Headache</span><div class="seg" data-k="sev"><button type="button" data-v="0">0 None</button><button type="button" data-v="1">1 Background</button><button type="button" data-v="2">2 Noticeable</button><button type="button" data-v="3">3 Bad</button><button type="button" data-v="4">4 Bed</button></div></div>
+  <div class="row f">
+    <div><label for="start">Started <span class="hint">(time)</span></label><input type="time" id="start"></div>
+    <div><label for="dur">Lasted <span class="hint">(hours)</span></label><input type="number" id="dur" inputmode="decimal" min="0" step="0.5" placeholder="3"></div>
+  </div>
+  <div class="f"><span class="lbl">Where <span class="hint">(tap any)</span></span><div class="seg" data-k="loc" data-multi="1"><button type="button" data-v="Left side">Left side</button><button type="button" data-v="Right side">Right side</button><button type="button" data-v="Behind eyes">Behind eyes</button><button type="button" data-v="Forehead">Forehead</button><button type="button" data-v="Cheeks">Cheeks</button><button type="button" data-v="Back of head">Back of head</button></div></div>
+  <div class="f"><span class="lbl">Feels like</span><div class="seg" data-k="feel"><button type="button" data-v="Throbbing">Throbbing</button><button type="button" data-v="Pressure">Pressure</button><button type="button" data-v="Stabbing">Stabbing</button><button type="button" data-v="Dull ache">Dull ache</button></div></div>
+  <div class="f"><span class="lbl">Sinus signs <span class="hint">(tap any)</span></span><div class="seg" data-k="sinus" data-multi="1"><button type="button" data-v="Congestion">Congestion</button><button type="button" data-v="Worse bending forward">Worse bending</button><button type="button" data-v="Discolored discharge">Discharge</button><button type="button" data-v="Reduced smell">Reduced smell</button><button type="button" data-v="Fever">Fever</button><button type="button" data-v="Allergy symptoms">Allergies</button></div></div>
+  <div class="f"><span class="lbl">Also had <span class="hint">(tap any)</span></span><div class="seg" data-k="oth" data-multi="1"><button type="button" data-v="Nausea">Nausea</button><button type="button" data-v="Light/sound">Light/sound</button><button type="button" data-v="Cold hands">Cold hands</button><button type="button" data-v="Jaw clench">Jaw clench</button><button type="button" data-v="Tight shoulders">Tight shoulders</button><button type="button" data-v="Full head">Full head</button></div></div>
+  <div class="f"><span class="lbl">Possible triggers <span class="hint">(tap any)</span></span><div class="seg" data-k="trig" data-multi="1"><button type="button" data-v="Late lunch">Late lunch</button><button type="button" data-v="Skipped meal">Skipped meal</button><button type="button" data-v="Stress">Stress</button><button type="button" data-v="Alcohol">Alcohol</button><button type="button" data-v="Screens">Screens</button><button type="button" data-v="Neck strain">Neck strain</button><button type="button" data-v="Exercise">Exercise</button><button type="button" data-v="Strong smell">Strong smell</button></div></div>
+  <div class="f"><label for="meals">Meal times <span class="hint">(e.g. 9, 1:30, 7)</span></label><input id="meals" placeholder="9, 1:30, 7"></div>
+  <div class="row f">
+    <div><label for="caf">Caffeine <span class="hint">(mg)</span></label><input type="number" id="caf" inputmode="numeric" min="0" placeholder="0"></div>
+    <div><label for="slp">Sleep <span class="hint">(hrs)</span></label><input type="number" id="slp" inputmode="decimal" min="0" step="0.5" placeholder="7"></div>
+    <div><label for="wat">Water <span class="hint">(cups)</span></label><input type="number" id="wat" inputmode="decimal" min="0" step="0.5" placeholder="4"></div>
+  </div>
+  <div class="f"><label for="meds">Medication <span class="hint">(what, dose, time, did it help)</span></label><input id="meds" placeholder="Ibuprofen 400mg 2pm, helped some"></div>
+  <details class="f"><summary>More details</summary>
+    <div class="f" style="margin-top:12px"><span class="lbl">Dizziness <span class="hint">(unsteady, seconds)</span></span><div class="seg" data-k="diz"><button type="button" data-v="None">None</button><button type="button" data-v="Leaning forward">Leaning forward</button><button type="button" data-v="Standing up">Standing up</button><button type="button" data-v="Sitting">Sitting</button></div></div>
+    <div class="f"><span class="lbl">Ear fullness / popping</span><div class="seg" data-k="ear"><button type="button" data-v="No">No</button><button type="button" data-v="Yes">Yes</button></div></div>
+    <div class="f"><span class="lbl">Tinnitus today</span><div class="seg" data-k="tin"><button type="button" data-v="Usual">Usual</button><button type="button" data-v="Louder">Louder</button><button type="button" data-v="Pulsing">Pulsing</button><button type="button" data-v="One ear">One ear</button></div></div>
+  </details>
+  <div class="f"><label for="note">Notes</label><textarea id="note" rows="2" placeholder="Long desk day, tried a snack..."></textarea></div>
+  <button class="primary" id="save" type="button">Save entry</button>
+  <div class="msg" id="msg" role="status"></div>
+</section>
+<section class="card" aria-label="Past entries">
+  <div class="top"><h2>Entries</h2><button class="ghost" id="dl" type="button">Download CSV</button></div>
+  <div id="list"></div>
+</section>
+</main>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},sel,entries=[];
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function pad(n){return String(n).padStart(2,'0')}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function say(t,err){var m=$('msg');m.textContent=t;m.className='msg'+(err?' err':'')}
+async function api(p,o){var r=await fetch(p,o);if(!r.ok)throw new Error('Server said '+r.status+(r.status===401?' (log in again)':''));return r.json()}
+document.querySelectorAll('.seg').forEach(function(g){
+  var k=g.dataset.k,multi=g.dataset.multi;
+  g.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed','false')});
+  g.addEventListener('click',function(ev){
+    var b=ev.target.closest('button');if(!b)return;var v=b.dataset.v;
+    if(multi){var i=sel[k].indexOf(v);if(i>-1)sel[k].splice(i,1);else sel[k].push(v);b.setAttribute('aria-pressed',i===-1)}
+    else{sel[k]=(sel[k]===v)?null:v;g.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.v===sel[k])})}
+  });
+});
+function reset(){
+  sel={sev:null,feel:null,diz:null,ear:null,tin:null,loc:[],sinus:[],oth:[],trig:[]};
+  document.querySelectorAll('.seg button').forEach(function(b){b.setAttribute('aria-pressed','false')});
+  ['start','dur','meals','caf','slp','wat','meds','note'].forEach(function(i){$(i).value=''});
+  $('date').value=ymd(new Date());
+}
+function stats(){
+  var now=new Date(),days=[],i,d;
+  for(i=29;i>=0;i--){d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i);days.push(ymd(d))}
+  var h=0,l=0;
+  $('strip').innerHTML=days.map(function(day){
+    var es=entries.filter(function(e){return e.date===day}),sev=es.reduce(function(a,e){return Math.max(a,e.sev||0)},0);
+    if(es.length)l++;if(sev>0)h++;
+    return '<div class="dot'+(sev?' d'+sev:'')+'"></div>';
+  }).join('');
+  $('s1').textContent=h;$('s2').textContent=l;
+}
+function render(){
+  entries.sort(function(a,b){return a.at<b.at?1:a.at>b.at?-1:b.id-a.id});stats();
+  var l=$('list');
+  if(!entries.length){l.innerHTML='<p class="meta">No entries yet. Fill in the form above and tap Save entry.</p>';return}
+  l.innerHTML=entries.slice(0,60).map(function(e){
+    var b=[],j=function(a){return a&&a.length?esc([].concat(a).join(', ')):''};
+    if(e.start)b.push('started '+esc(e.start));if(e.dur)b.push(esc(e.dur)+'h');
+    if(j(e.loc))b.push(j(e.loc));if(e.feel)b.push(esc(e.feel));
+    if(j(e.sinus))b.push('sinus: '+j(e.sinus));if(e.diz)b.push('dizzy: '+esc(e.diz));if(e.ear)b.push('ears: '+esc(e.ear));
+    if(e.tin&&e.tin!=='Usual')b.push('tinnitus: '+esc(e.tin));if(j(e.oth))b.push(j(e.oth));if(j(e.trig))b.push('triggers: '+j(e.trig));
+    if(e.meals)b.push('meals '+esc(e.meals));if(e.caf!=='')b.push(esc(e.caf)+' mg caffeine');if(e.slp!=='')b.push(esc(e.slp)+' h sleep');if(e.wat!=='')b.push(esc(e.wat)+' cups water');
+    if(e.meds)b.push('meds: '+esc(e.meds));
+    if(e.p)b.push(esc(e.p.hpa)+' hPa'+(e.p.d3!==''?' ('+(e.p.d3>0?'+':'')+esc(e.p.d3)+' in 3h, '+(e.p.d24>0?'+':'')+esc(e.p.d24)+' in 24h)':''));
+    return '<div class="entry"><div class="top" style="margin:0"><span><b>'+esc(e.date)+'</b> &nbsp;Headache '+(e.sev===null?'-':e.sev)+'</span><button class="ghost" data-del="'+e.id+'" aria-label="Delete entry '+esc(e.date)+'">Delete</button></div><div class="meta">'+(b.join('; ')||'No details')+'</div>'+(e.note?'<div>'+esc(e.note)+'</div>':'')+'</div>';
+  }).join('')+(entries.length>60?'<p class="meta">Showing the latest 60. The CSV has everything.</p>':'');
+}
+$('save').addEventListener('click',async function(){
+  var d=$('date').value||ymd(new Date()),n=new Date(),t=$('start').value||(pad(n.getHours())+':'+pad(n.getMinutes()));
+  var e={date:d,at:d+'T'+t,sev:sel.sev===null?null:+sel.sev,start:$('start').value,dur:$('dur').value,loc:sel.loc,feel:sel.feel||'',sinus:sel.sinus,diz:sel.diz||'',ear:sel.ear||'',tin:sel.tin||'',oth:sel.oth,trig:sel.trig,meals:$('meals').value.trim(),caf:$('caf').value,slp:$('slp').value,wat:$('wat').value,meds:$('meds').value.trim(),note:$('note').value.trim()};
+  try{var s=await api('/api/entries',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(e)});entries.push(s);render();reset();say('Saved.')}
+  catch(x){say('Not saved: '+x.message+'. Your answers are still in the form.',true)}
+});
+$('list').addEventListener('click',async function(ev){
+  var b=ev.target.closest('[data-del]');if(!b)return;if(!confirm('Delete this entry?'))return;
+  try{await api('/api/entries/'+b.dataset.del,{method:'DELETE'});entries=entries.filter(function(e){return e.id!==+b.dataset.del});render()}catch(x){say(x.message,true)}
+});
+$('dl').addEventListener('click',function(){location.href='/entries.csv'});
+reset();
+api('/api/entries').then(function(r){entries=r;render()}).catch(function(x){say('Could not load entries: '+x.message,true)});
+api('/api/status').then(function(s){if(s.pressure){$('s3').textContent=Math.round(s.pressure.hpa);if(s.pressure.d3!=='')$('pnote').textContent='Pressure '+(s.pressure.d3>0?'+':'')+s.pressure.d3+' hPa over 3h.'}}).catch(function(){});
+})();
+</script>
+</body>
+</html>

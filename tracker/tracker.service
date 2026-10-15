@@ -1,0 +1,13 @@
+[Unit]
+Description=Headache tracker
+After=network-online.target
+
+[Service]
+User=seanvs
+WorkingDirectory=/home/seanvs/my-pi-sites/tracker
+Environment=DATA_DIR=/home/seanvs/headache-data
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
